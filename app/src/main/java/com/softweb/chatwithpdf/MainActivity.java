@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RequestQueue requestQueue;
 
-    private String serverUrl = "https://be532ea3-610b-48eb-934e-cdbf7703e2b8-00-1rinkp2flxixx.pike.replit.dev/";
+    private String serverUrl = "https://omwaman.pythonanywhere.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
