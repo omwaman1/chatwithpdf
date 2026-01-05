@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.softweb.chatwithpdf"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -51,10 +51,14 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    implementation("com.android.volley:volley:1.2.1")
+    
+    // PDF Viewer
     implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
     implementation("com.github.bumptech.glide:glide:4.11.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-
-
+    
+    // PDF Text Extraction
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+    
+    // MediaPipe LLM Inference for Qwen
+    implementation("com.google.mediapipe:tasks-genai:0.10.22")
 }
