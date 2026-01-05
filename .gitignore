@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Keystore files (security - do not commit)
+*.jks
+*.keystore
+HINGOLIHUBKEY
+keystore.properties
