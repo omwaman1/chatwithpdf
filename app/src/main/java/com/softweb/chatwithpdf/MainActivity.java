@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     
     // URLs
     private static final String PRIVACY_POLICY_URL = "https://omwaman1.github.io/chatwithpdf/privacy-policy.html";
-    private static final String PLAY_STORE_URL = "https://play.google.com/store/apps/developer?id=Softweb+Technologies";
+    private static final String PLAY_STORE_URL = "https://play.google.com/store/apps/dev?id=Softweb_Technologies";
     
     private Uri pdfUri;
     private String pdfText = "";
