@@ -5,17 +5,42 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep line numbers for debugging
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# PDFBox rules
+-keep class com.tom_roush.pdfbox.** { *; }
+-keep class org.apache.fontbox.** { *; }
+-keep class org.apache.pdfbox.** { *; }
+-dontwarn com.tom_roush.pdfbox.**
+-dontwarn org.apache.fontbox.**
+-dontwarn org.bouncycastle.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# OkHttp (used by ChatApiClient)
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
+
+# Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep class * extends com.bumptech.glide.module.AppGlideModule { <init>(...); }
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+-dontwarn com.bumptech.glide.**
+
+# AndroidX
+-keep class androidx.** { *; }
+-dontwarn androidx.**
+
+# Material Design
+-keep class com.google.android.material.** { *; }
+-dontwarn com.google.android.material.**
+
+# WebView
+-keepclassmembers class * extends android.webkit.WebViewClient {
+    public void *(android.webkit.WebView, java.lang.String);
+}
