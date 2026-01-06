@@ -41,6 +41,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    
+    // Fix 16 KB page alignment for newer Android devices
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
 }
 
 dependencies {

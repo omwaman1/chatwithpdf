@@ -3,6 +3,7 @@ package com.softweb.chatwithpdf;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,12 +13,19 @@ import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
     private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB max
     private static final int MAX_TEXT_CHARS = 50000; // ~50K chars for model context
     
+    // URLs
+    private static final String PRIVACY_POLICY_URL = "https://omwaman1.github.io/chatwithpdf/privacy-policy.html";
+    private static final String PLAY_STORE_URL = "https://play.google.com/store/apps/developer?id=Softweb+Technologies";
+    
     private Uri pdfUri;
     private String pdfText = "";
 
@@ -42,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button uploadButton;
     private Button askButton;
+    private ImageButton menuButton;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     private RecyclerView chatRecyclerView;
     private ChatAdapter chatAdapter;
@@ -59,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         uploadButton = findViewById(R.id.uploadButton);
         askButton = findViewById(R.id.askButton);
+        menuButton = findViewById(R.id.menuButton);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
 
         chatMessages = new ArrayList<>();
@@ -72,8 +90,84 @@ public class MainActivity extends AppCompatActivity {
         fileNameTextView.setText("Ready - Select a PDF");
 
         uploadButton.setOnClickListener(v -> requestStoragePermission());
-        
         askButton.setOnClickListener(v -> askQuestion());
+        menuButton.setOnClickListener(v -> openDrawer());
+        
+        // Set up navigation drawer item selection
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_about) {
+                showAboutDialog();
+            } else if (id == R.id.nav_privacy) {
+                openPrivacyPolicy();
+            } else if (id == R.id.nav_share) {
+                shareApp();
+            } else if (id == R.id.nav_more_apps) {
+                openMoreApps();
+            }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+    }
+    
+    private void openDrawer() {
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+    
+    private void showAboutDialog() {
+        String version = "2.0";
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        new AlertDialog.Builder(this)
+            .setTitle("About Chat with PDF")
+            .setMessage("Version: " + version + "\n\n" +
+                    "Chat with PDF lets you upload any PDF document and ask questions about its content using AI.\n\n" +
+                    "Features:\n" +
+                    "• Upload PDF files (max 10MB)\n" +
+                    "• Ask questions in natural language\n" +
+                    "• Get AI-powered answers\n\n" +
+                    "Developed by Softweb Technologies")
+            .setPositiveButton("OK", null)
+            .setNeutralButton("Privacy Policy", (d, w) -> openPrivacyPolicy())
+            .show();
+    }
+    
+    private void openPrivacyPolicy() {
+        Intent intent = new Intent(this, PrivacyPolicyActivity.class);
+        startActivity(intent);
+    }
+    
+    private void shareApp() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Chat with PDF - AI Document Assistant");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, 
+            "Check out Chat with PDF! Upload any PDF and ask questions about it using AI.\n\n" +
+            "Download: https://play.google.com/store/apps/details?id=" + getPackageName());
+        startActivity(Intent.createChooser(shareIntent, "Share via"));
+    }
+    
+    private void openMoreApps() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_URL));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Could not open Play Store", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void requestStoragePermission() {
