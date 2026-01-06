@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -32,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PICK_PDF_REQUEST = 1;
     private static final int STORAGE_PERMISSION_CODE = 2;
+    private static final long MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB max
+    private static final int MAX_TEXT_CHARS = 50000; // ~50K chars for model context
     
     private Uri pdfUri;
     private String pdfText = "";
@@ -41,13 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button uploadButton;
     private Button askButton;
-    private TextView statusTextView;
 
     private RecyclerView chatRecyclerView;
     private ChatAdapter chatAdapter;
     private List<ChatMessage> chatMessages;
 
-    private QwenInference qwenInference;
+    private ChatApiClient chatApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,92 +66,18 @@ public class MainActivity extends AppCompatActivity {
         chatRecyclerView.setAdapter(chatAdapter);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Initialize Qwen LLM
-        qwenInference = new QwenInference(this);
+        // Initialize Chat API Client
+        chatApiClient = new ChatApiClient(this);
         
-        // Check if model needs to be downloaded
-        checkModelStatus();
+        fileNameTextView.setText("Ready - Select a PDF");
 
         uploadButton.setOnClickListener(v -> requestStoragePermission());
         
         askButton.setOnClickListener(v -> askQuestion());
     }
-    
-    private void checkModelStatus() {
-        if (!qwenInference.isModelDownloaded()) {
-            showModelDownloadDialog();
-        } else {
-            initializeModel();
-        }
-    }
-    
-    private void showModelDownloadDialog() {
-        new AlertDialog.Builder(this)
-            .setTitle("Download AI Model")
-            .setMessage("The offline AI model (~300MB) needs to be downloaded for the app to work.\n\nThis is a one-time download.")
-            .setPositiveButton("Download", (dialog, which) -> downloadModel())
-            .setNegativeButton("Cancel", (dialog, which) -> {
-                Toast.makeText(this, "Model required for Q&A functionality", Toast.LENGTH_LONG).show();
-            })
-            .setCancelable(false)
-            .show();
-    }
-    
-    private void downloadModel() {
-        progressBar.setVisibility(View.VISIBLE);
-        fileNameTextView.setText("Downloading AI model...");
-        
-        qwenInference.downloadModel(new QwenInference.ModelDownloadCallback() {
-            @Override
-            public void onProgress(int percent) {
-                fileNameTextView.setText("Downloading: " + percent + "%");
-            }
-            
-            @Override
-            public void onComplete(File modelFile) {
-                fileNameTextView.setText("Download complete!");
-                progressBar.setVisibility(View.GONE);
-                initializeModel();
-            }
-            
-            @Override
-            public void onError(String error) {
-                progressBar.setVisibility(View.GONE);
-                fileNameTextView.setText("Download failed");
-                Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-    
-    private void initializeModel() {
-        progressBar.setVisibility(View.VISIBLE);
-        fileNameTextView.setText("Loading AI model...");
-        
-        qwenInference.initialize(new QwenInference.InferenceCallback() {
-            @Override
-            public void onResult(String response) {
-                // Not used for initialization
-            }
-            
-            @Override
-            public void onError(String error) {
-                progressBar.setVisibility(View.GONE);
-                fileNameTextView.setText("Model load failed");
-                Toast.makeText(MainActivity.this, error, Toast.LENGTH_LONG).show();
-            }
-            
-            @Override
-            public void onProgress(String status) {
-                progressBar.setVisibility(View.GONE);
-                fileNameTextView.setText("Ready - Select a PDF");
-                Toast.makeText(MainActivity.this, status, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void requestStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // For Android 13+, we don't need storage permissions for document picker
             selectPdf();
         } else {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -193,9 +119,29 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PDF_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             pdfUri = data.getData();
+            
+            // Validate file size
+            long fileSize = getFileSize(pdfUri);
+            if (fileSize > MAX_FILE_SIZE_BYTES) {
+                Toast.makeText(this, "❌ File too large! Max size is 10MB", Toast.LENGTH_LONG).show();
+                return;
+            }
+            
             displayFileName(pdfUri);
             extractPdfText();
         }
+    }
+    
+    private long getFileSize(Uri uri) {
+        try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                if (sizeIndex != -1) {
+                    return cursor.getLong(sizeIndex);
+                }
+            }
+        }
+        return 0;
     }
 
     @SuppressLint("Range")
@@ -226,15 +172,10 @@ public class MainActivity extends AppCompatActivity {
                     if (pdfText.isEmpty()) {
                         Toast.makeText(this, "Could not extract text from PDF", Toast.LENGTH_LONG).show();
                     } else {
-                        // Show extracted text preview in chat
-                        String preview = pdfText.length() > 200 
-                            ? pdfText.substring(0, 200) + "..." 
-                            : pdfText;
-                        chatMessages.add(new ChatMessage("PDF loaded (" + pdfText.length() + " characters)\n\nPreview: " + preview, false));
+                        // Show clean confirmation without messy preview
+                        chatMessages.add(new ChatMessage("✅ PDF ready! Ask me anything about this document.", false));
                         chatAdapter.notifyDataSetChanged();
                         chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
-                        
-                        Toast.makeText(this, "PDF text extracted. Ready for questions!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 
@@ -259,22 +200,15 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Please upload a PDF first", Toast.LENGTH_SHORT).show();
             return;
         }
-        
-        if (!qwenInference.isReady()) {
-            Toast.makeText(this, "AI model not ready. Please wait...", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         progressBar.setVisibility(View.VISIBLE);
         questionEditText.setText("");
 
-        // Add the question to the chat
         chatMessages.add(new ChatMessage(question, true));
         chatAdapter.notifyDataSetChanged();
         chatRecyclerView.scrollToPosition(chatMessages.size() - 1);
 
-        // Ask the local LLM
-        qwenInference.askQuestion(pdfText, question, new QwenInference.InferenceCallback() {
+        chatApiClient.askQuestion(pdfText, question, new ChatApiClient.ChatCallback() {
             @Override
             public void onResult(String response) {
                 progressBar.setVisibility(View.GONE);
@@ -299,8 +233,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (qwenInference != null) {
-            qwenInference.close();
+        if (chatApiClient != null) {
+            chatApiClient.close();
         }
     }
 }

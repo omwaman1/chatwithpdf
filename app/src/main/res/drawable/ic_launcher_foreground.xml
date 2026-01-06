@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- PDF Document -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,20h26l14,14v44c0,2 -1.6,4 -4,4H34c-2,0 -4,-1.6 -4,-4V24c0,-2 1.6,-4 4,-4z"/>
+    
+    <!-- Document Fold -->
+    <path
+        android:fillColor="#E0E7FF"
+        android:pathData="M60,20v14h14z"/>
+    
+    <!-- Chat Bubble -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M62,54c6,0 11,5 11,11c0,6 -5,11 -11,11h-14l-8,8v-8c-4,0 -8,-3.6 -8,-8v-3c0,-6.6 4.8,-11 11,-11h20z"/>
+    
+    <!-- Chat Dots -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,65m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,65m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M64,65m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"/>
+</vector>

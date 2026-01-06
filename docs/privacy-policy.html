@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Chat with PDF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.7;
+            color: #1e293b;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            color: #6366f1;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+        .app-name {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+        }
+        .last-updated {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+        h2 {
+            color: #334155;
+            font-size: 1.4rem;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        p {
+            margin-bottom: 16px;
+            color: #475569;
+        }
+        ul {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+        li {
+            margin-bottom: 8px;
+            color: #475569;
+        }
+        .permission-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .permission-box h3 {
+            color: #92400e;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .permission-item {
+            background: #f8fafc;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .permission-item strong {
+            color: #6366f1;
+        }
+        .contact {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+        .contact a {
+            color: #6366f1;
+        }
+        footer {
+            text-align: center;
+            margin-top: 32px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Privacy Policy</h1>
+        <p class="app-name">Chat with PDF - AI Document Assistant</p>
+        
+        <div class="last-updated">
+            <strong>Last Updated:</strong> January 6, 2026<br>
+            <strong>Version:</strong> 2.0
+        </div>
+
+        <h2>📋 Introduction</h2>
+        <p>
+            Chat with PDF ("the App") is developed by Softweb Technologies. We are committed to protecting your privacy and being transparent about how we handle your data. This privacy policy explains what information we collect, how we use it, and your rights regarding your data.
+        </p>
+
+        <h2>📊 Information We Collect</h2>
+        
+        <h3 style="margin-top: 16px; color: #475569;">Data We DO NOT Collect:</h3>
+        <ul>
+            <li>We do <strong>not</strong> collect personal information (name, email, phone)</li>
+            <li>We do <strong>not</strong> store your PDF files on our servers</li>
+            <li>We do <strong>not</strong> create user accounts</li>
+            <li>We do <strong>not</strong> use analytics or tracking tools</li>
+            <li>We do <strong>not</strong> share any data with third parties for advertising</li>
+        </ul>
+
+        <h3 style="margin-top: 16px; color: #475569;">Data We Process:</h3>
+        <ul>
+            <li><strong>PDF Text Content:</strong> When you upload a PDF, we extract the text locally on your device. This text is sent to our AI backend only to answer your questions. The text is not stored permanently.</li>
+            <li><strong>Questions:</strong> Your questions are sent to our AI service for processing. They are not stored after generating a response.</li>
+        </ul>
+
+        <h2>🔐 App Permissions</h2>
+        
+        <div class="permission-box">
+            <h3>⚠️ Permissions Required</h3>
+            <p>This app requires the following permissions to function:</p>
+        </div>
+
+        <div class="permission-item">
+            <strong>INTERNET</strong><br>
+            <em>Purpose:</em> Required to send your questions to our AI backend server and receive answers. Without this permission, the app cannot provide AI-powered responses.
+        </div>
+
+        <div class="permission-item">
+            <strong>READ_EXTERNAL_STORAGE</strong> (Android 12 and below only)<br>
+            <em>Purpose:</em> Required to access PDF files from your device storage. This permission is only requested on older Android versions. On Android 13+, we use the document picker which doesn't require this permission.
+        </div>
+
+        <h2>☁️ Third-Party Services</h2>
+        <p>
+            We use the following third-party services to provide AI functionality:
+        </p>
+        <ul>
+            <li><strong>HuggingFace Inference API:</strong> We use HuggingFace's AI models to process your questions and generate answers. Please review <a href="https://huggingface.co/privacy" target="_blank">HuggingFace's Privacy Policy</a>.</li>
+            <li><strong>Railway:</strong> Our backend is hosted on Railway. No personal data is stored on their servers.</li>
+        </ul>
+
+        <h2>🔒 Data Security</h2>
+        <ul>
+            <li>All communications between the app and our servers use HTTPS encryption</li>
+            <li>PDF content is processed in-memory and not stored permanently</li>
+            <li>We do not maintain user sessions or track individual users</li>
+        </ul>
+
+        <h2>👶 Children's Privacy</h2>
+        <p>
+            This app is not intended for children under 13. We do not knowingly collect any personal information from children.
+        </p>
+
+        <h2>📝 Changes to This Policy</h2>
+        <p>
+            We may update this privacy policy from time to time. Any changes will be posted on this page with an updated "Last Updated" date. We encourage you to review this policy periodically.
+        </p>
+
+        <h2>✉️ Contact Us</h2>
+        <div class="contact">
+            <p>If you have any questions about this privacy policy or our data practices, please contact us at:</p>
+            <p>
+                <strong>Email:</strong> <a href="mailto:omwaman1@gmail.com">omwaman1@gmail.com</a><br>
+                <strong>Developer:</strong> Softweb Technologies<br>
+                <strong>GitHub:</strong> <a href="https://github.com/omwaman1" target="_blank">github.com/omwaman1</a>
+            </p>
+        </div>
+
+        <footer>
+            <p>© 2026 Softweb Technologies. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
